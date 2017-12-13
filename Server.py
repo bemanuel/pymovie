@@ -60,9 +60,7 @@ def filmes():
 
    ###AQUI CINESYSTEM
    for prog in cinesystem.find_all(id="programacao_cinema"):
-     print("here" + prog)
      for dataBox in prog.find_all(class_="row"):
-       print("here2")
        nomeFilme = dataBox.find("a")
        #Nesse cinema vem a sala, se eh leg ou dub e se eh 3D
        dub_leg = dataBox.find("div", class_="col-xs-10 painel-salas-info").text.strip()
@@ -76,7 +74,6 @@ def filmes():
                         'dub_leg' : dub_leg,
                         'horarios': horarios.text.replace("comprar","").split()
                         })
-       print('PassoC')
 
    ### AQUI KINOPLEX
    for dataBox in kinoplex.find_all("div", class_="cinema-programacao"):
@@ -85,7 +82,6 @@ def filmes():
        sala_leg_3d = dataBox.find("h6", class_=re.compile("^card-subtitle mb-2"))
        regex = "^([1-9])(LEG|DUB|)(3D|)$"
        sala_leg_3d = re.compile(regex).split(sala_leg_3d.text.strip().replace('Sala ',''))
-       print(sala_leg_3d)
        horarios = dataBox.find("span", class_=re.compile("^horarios-sessao"))
        data.append({   'cinema': "Kinoplex",
                        'filme': nomeFilme.text.strip(),
@@ -95,7 +91,6 @@ def filmes():
                        'dub_leg' : sala_leg_3d[2],
                        'horarios': horarios.text.replace("-","").split()
                        })
-       print('PassoZ')
 
    db.purge()
    db.all()
@@ -115,14 +110,12 @@ def listaSalasFilme(filme):
 def listaSessaoHorario(horario):
    print(horario)
    Mov = Query()
-   print("Aqui")
    return jsonify({'filmes': db.search(Mov.horarios.any([horario]))})
 
 @app.route('/api/v1/<cinema>', methods=['GET'])
 def listaFilmesCinema(cinema):
    print(cinema.upper())
    Mov = Query()
-   print("Aqui")
    return jsonify({'filmes': db.search(Mov.cinema.any(cinema)),'salas': '/api/v1/'+cinema+'/sessoes/<filme>'})
 
 @app.route('/api/v1/<cinema>/sessoes/<filme>', methods=['GET'])
