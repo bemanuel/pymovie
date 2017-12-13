@@ -13,7 +13,7 @@ db = TinyDB('db.json')
 #PARTE3
 @app.route('/api/v1/filmes', methods=['GET'])
 def filmes():
-  #MEU CÓDIGO AQUI
+  #MEU CODIGO AQUI
    html_doc = urlopen("http://www.adorocinema.com/filmes/numero-cinemas/").read()
 
    html_kino = urlopen("https://www.kinoplex.com.br/cinema/37").read()
@@ -129,4 +129,4 @@ def listaSalasFilmeNoCinema(cinema,filme):
 #PARTE4
 if __name__ == '__main__':
   port = int(os.environ.get('PORT', 5000))
-  app.run(host='127.0.0.1', port=port)
+  app.run(host='0.0.0.0', port=port)
