@@ -1,4 +1,3 @@
-#PARTE1
 from flask import Flask, jsonify, request
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
@@ -8,14 +7,13 @@ import re
 
 #PARTE2
 app = Flask(__name__)
+#ATIVANDO O DB
 db = TinyDB('db.json')
 
 #PARTE3
 @app.route('/api/v1/filmes', methods=['GET'])
 def filmes():
   #MEU CODIGO AQUI
-   html_doc = urlopen("http://www.adorocinema.com/filmes/numero-cinemas/").read()
-
    html_kino = urlopen("https://www.kinoplex.com.br/cinema/37").read()
 
    html_cinesystem = urlopen("https://www.cinesystem.com.br/cinemas/rio-anil-shopping/856").read()
@@ -27,37 +25,13 @@ def filmes():
    request = Request(url, None, headers)
    response = urlopen(request)
    html_docg = response.read()
-   #soup = BeautifulSoup(html_doc, "html.parser")
 
-   #soup2 = BeautifulSoup(html_docg, "html.parser")
+   #soup = BeautifulSoup(html_docg, "html.parser")
 
    kinoplex = BeautifulSoup(html_kino, "html.parser")
    cinesystem = BeautifulSoup(html_cinesystem, "html.parser")
 
    data = []
-   '''
-   for dataBox in soup.find_all("div", class_="card card-entity card-entity-list cf"):
-       nomeObj = dataBox.find("h2", class_="meta-title")
-       imgObj = dataBox.find(class_="thumbnail ")
-       sinopseObj = dataBox.find("div", class_="synopsis")
-       dataObj = dataBox.find(class_="meta-body").find(class_="meta-body-item meta-body-info")
-
-       print('PassoX')
-       data.append({ 'nome': nomeObj.text.strip(),
-                       'poster' : imgObj.img['data-src'].strip(),
-                       'sinopse' : sinopseObj.text.strip(),
-                       'data' :  dataObj.text[1:23].strip().replace('/',' ')})
-
-
-   for dataBox in soup2.find_all("div", class_=re.compile("^_GCg mlo-c")):
-       nomeFilme = dataBox.find("a", class_="klitem")
-       print('Passo')
-       data.append({ 'nome': nomeFilme.text.strip(),
-                       'poster' : "",
-                       'sinopse' : "",
-                       'data' :  ""})
-   '''
-
    ###AQUI CINESYSTEM
    for prog in cinesystem.find_all(id="programacao_cinema"):
      for dataBox in prog.find_all(class_="row"):
@@ -97,7 +71,7 @@ def filmes():
    for filme in data:
        db.insert(filme)
 
-   return jsonify({'filmes': data})
+   return jsonify({'filmes': data, 'salas':'/api/v1/salas/<filme>', 'sessoes':'/api/v1/sessoes/<horario>', 'cinema':'/api/v1/<cinema>'})
 
 @app.route('/api/v1/salas/<filme>', methods=['GET'])
 def listaSalasFilme(filme):
